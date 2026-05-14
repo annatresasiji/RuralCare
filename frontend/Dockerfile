@@ -1,13 +1,15 @@
-FROM node:20-slim as build
+FROM node:20-slim
+
 WORKDIR /app
+
 COPY package*.json ./
 RUN npm install
+
 COPY . .
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build
 
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
+RUN npm install -g serve
+
 EXPOSE 8080
-CMD ["nginx","-g","daemon off;"]
+
+CMD ["serve", "-s", "dist", "-l", "8080"]
